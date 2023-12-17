@@ -34,13 +34,13 @@ ECSはフロントエンド用とバックエンド用の2つを用意してい�
 1. **リポジトリのクローン**：このリポジトリをローカルマシンにクローンします。
 
     ```
-    git clone https://github.com/your-repository.git
+    git clone https://github.com/aws-ecs.git
     ```
 
 2. **ディレクトリの移動**：クローンしたリポジトリのディレクトリに移動します。
 
     ```
-    cd your-repository
+    cd aws-ecs
     ```
 
 3. **依存関係のインストール**：プロジェクトの依存関係をインストールします。
