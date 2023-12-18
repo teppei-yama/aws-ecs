@@ -1,0 +1,116 @@
+"Vpc":{ 
+    "project":"order",                             // プロジェクト名
+    "cidr":"10.0.0.0/16",                          // VPCのCIDRブロック
+    "maxaz": 2,                                    // 使用する最大のアベイラビリティゾーンの数
+    "natGateway":2,                                // NATゲートウェイの数 ecsを２つ配置する際は２つ必要
+    "location":"ap-northeast-1",                   // AWSリージョン
+    "availbiltyZones":["a","c"]                    // 使用するアベイラビリティゾーン
+},
+"Subnet":{
+    "cidr":24,                                     // サブネットのCIDRブロック
+    "public":{
+        "number":1,                                // パブリックサブネットの数
+        "name":["alb"]                             // パブリックサブネットの名前
+    },
+    "private":{
+        "number":1,                                // プライベートサブネットの数
+        "name":["app"]                             // プライベートサブネットの名前
+    },
+    "Isolated":{
+        "number":1,                                // Isolatedサブネットの数
+        "name":["db"]                              // Isolatedサブネットの名前
+    }
+}
+
+"securityPort": {
+    "inboundFromNet": 80,                                                       // インターネットからのインバウンドトラフィックを許可するポート番号
+    "outboundServiceFromPort": 0,                                               // サービスからのアウトバウンドトラフィックを許可する開始ポート番号
+    "outboundServiceToPort": 65535,                                             // サービスからのアウトバウンドトラフィックを許可する終了ポート番号
+    "inboundServiceFromPort": 0,                                                // サービスへのインバウンドトラフィックを許可する開始ポート番号
+    "inboundServiceToPort": 65535                                               // サービスへのインバウンドトラフィックを許可する終了ポート番号
+},
+"cacheSettings": {
+    "cacheSecurityGroupName": "RedisSecurityGroup",                             // Redisインスタンスのセキュリティグループ名
+    "cacheSecurityGroupDescription": "Security group for the Redis instance",   // Redisインスタンスのセキュリティグループの説明
+    "cacheSubnetGroupName": "RedisSubnetGroup",                                 // Redisインスタンスのサブネットグループ名
+    "cacheSubnetGroupDescription": "Subnet group for the Redis instance",       // Redisインスタンスのサブネットグループの説明
+    "subnet": ["order-db-a"],                                                   // Redisインスタンスを配置するサブネット
+    "cacheName": "myredis",                                                     // Redisインスタンスの名前
+    "cacheNodeType": "cache.t2.micro",                                          // Redisインスタンスのノードタイプ（詳細は公式サイトを参照）
+    "engine": "redis",                                                          // 使用するキャッシュエンジン（ここではRedis）
+    "engineVersion": "7.0",                                                     // キャッシュエンジンのバージョン
+    "numCacheNodes": 1,                                                         // 配置するキャッシュノードの数
+    "clusterName":  "my-redis-cluster",                                         // キャッシュクラスターの名前
+    "port": 6379,                                                               // Redisインスタンスのポート番号
+    "removalPolicy": "DESTROY",                                                 // リソース削除ポリシー（ここでは削除時にリソースも破棄）
+    "snapshotRetentionLimit": 0,                                                // スナップショットの保持期間（0は保持しない）
+    "snapshotName":"cacheSnapshot",                                             // スナップショットの名前   保持期間が0の場合は使用できません
+    "snapshotWindow": "03:00-04:00",                                            // スナップショットを取得する時間帯     保持期間が0の場合は使用できません
+    "transitEncryptionEnabled": true                                            // トランジット暗号化の有効化（通信内容の暗号化）   redisの場合は使用できません。
+},
+"rdsSettings": {
+    "subnet": ["order-db-a","order-db-c"],                                      // RDSインスタンスを配置するサブネット（2つ指定しないとエラーが出ます）
+    "rdsSecurityGroupName": "RdsSecurityGroup",                                 // RDSインスタンスのセキュリティグループ名
+    "rdsSecurityGroupDescription": "Security group for the RDS instance",       // RDSインスタンスのセキュリティグループの説明
+    "username": "myuser",                                                       // データベースのユーザー名
+    "password": "mypassword",                                                   // データベースのパスワード
+    "secretName": "DbSecret",                                                   // Secret Managerの名前
+    "generateStringKey": "generatedPassword",                                   // Secret Managerで生成されるパスワードのキー
+    "rdsSubnetGroupName": "DbSubnetGroup",                                      // RDSインスタンスのサブネットグループ名
+    "rdsSubnetGroupDescription": "Subnet group for the RDS instance",           // RDSインスタンスのサブネットグループの説明
+    "rdsInstanceName": "RdsInstance",                                           // RDSインスタンスの名前
+    "removalPolicy": "DESTROY",                                                 // リソース削除ポリシー（ここでは削除時にリソースも破棄）
+    "engineType": "mysql",                                                      // 使用するデータベースエンジン（ここではMySQL）
+    "engineVersion": "8.0.34",                                                  // データベースエンジンのバージョン
+    "instanceClass": "T2",                                                      // RDSインスタンスのクラス（詳細は公式サイトを参照）
+    "instanceSize": "MICRO",                                                    // RDSインスタンスのサイズ
+    "port": 3306                                                                // RDSインスタンスのポート番号
+},
+"service1": {
+    "clusterName": "MyCluster",                                                // ECSクラスターの名前
+    "subnet":["order-app-c"],                                                  // ECSサービスを配置するサブネット
+    "ecsTaskExecutionRoleName": "ECSTaskExecutionRole",                        // ECSタスク実行ロールの名前
+    "iamActions": ["rds:*", "elasticache:*"],                                  // IAMポリシーで許可するアクション
+    "iamResources": ["*"],                                                     // IAMポリシーで許可するリソース
+    "eceSecurityGroupName": "EcsSecurityGroup1",                               // ECSサービスのセキュリティグループ名
+    "eceSecurityGroupDescription": "Security group for the ECS service",       // ECSサービスのセキュリティグループの説明
+    "FargateServiceName": "FargateService1",                                   // Fargateサービスの名前
+    "cpu": 256,                                                                // タスク定義で使用するCPUの単位
+    "memory": 512,                                                             // タスク定義で使用するメモリの単位（MB）
+    "desiredCounts": 1,                                                        // サービスが維持するべきタスクの数
+    "containerImage": "amazon/amazon-ecs-sample",                              // コンテナイメージの名前
+    "containerName": "container1",                                             // コンテナの名前
+    "containerPort": 80,                                                       // コンテナのポート番号
+    "publicLoadBalancer": true,                                                // パブリックロードバランサーを使用するかどうか
+    "minCapacity": 1,                                                          // オートスケーリンググループの最小容量
+    "maxCapacity": 5,                                                          // オートスケーリンググループの最大容量
+    "targetUtilizationPercent": 50,                                            // ターゲットとするCPU使用率のパーセンテージ
+    "scaleInCooldown": 60,                                                     // スケールインのクールダウン時間（秒）
+    "scaleOutCooldown": 60,                                                    // スケールアウトのクールダウン時間（秒）
+    "healthCheckPath": "/",                                                    // ヘルスチェックのパス
+    "timeout": 5,                                                              // ヘルスチェックのタイムアウト時間（秒）
+    "healthyThresholdCount": 2,                                                // ヘルスチェックが成功するまでの回数
+    "interval": 10                                                             // ヘルスチェックの間隔（秒）
+},
+"service2": {
+    "subnet":["order-app-a"],                                                  // ECSサービスを配置するサブネット
+    "eceSecurityGroupName": "EcsSecurityGroup2",                               // ECSサービスのセキュリティグループ名
+    "eceSecurityGroupDescription": "Security group for the ECS service",       // ECSサービスのセキュリティグループの説明
+    "FargateServiceName": "FargateService2",                                   // Fargateサービスの名前
+    "cpu": 256,                                                                // タスク定義で使用するCPUの単位
+    "memory": 512,                                                             // タスク定義で使用するメモリの単位（MB）
+    "desiredCounts": 1,                                                        // サービスが維持するべきタスクの数
+    "containerImage": "amazon/amazon-ecs-sample",                              // コンテナイメージの名前
+    "containerName": "container2",                                             // コンテナの名前
+    "containerPort": 80,                                                       // コンテナのポート番号
+    "publicLoadBalancer": true,                                                // パブリックロードバランサーを使用するかどうか
+    "minCapacity": 1,                                                          // オートスケーリンググループの最小容量
+    "maxCapacity": 5,                                                          // オートスケーリンググループの最大容量
+    "targetUtilizationPercent": 50,                                            // ターゲットとするCPU使用率のパーセンテージ
+    "scaleInCooldown": 60,                                                     // スケールインのクールダウン時間（秒）
+    "scaleOutCooldown": 60,                                                    // スケールアウトのクールダウン時間（秒）
+    "healthCheckPath": "/",                                                    // ヘルスチェックのパス
+    "timeout": 5,                                                              // ヘルスチェックのタイムアウト時間（秒）
+    "healthyThresholdCount": 2,                                                // ヘルスチェックが成功するまでの回数
+    "interval": 10                                                             // ヘルスチェックの間隔（秒）
+}
