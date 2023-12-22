@@ -78,7 +78,7 @@
     "cpu": 256,                                                                // タスク定義で使用するCPUの単位
     "memory": 512,                                                             // タスク定義で使用するメモリの単位（MB）
     "desiredCounts": 1,                                                        // サービスが維持するべきタスクの数
-    "containerImage": "amazon/amazon-ecs-sample",                              // コンテナイメージの名前
+    "containerImage": "amazon/amazon-ecs-sample",                              // コンテナイメージのURL
     "containerName": "container1",                                             // コンテナの名前
     "containerPort": 80,                                                       // コンテナのポート番号
     "publicLoadBalancer": true,                                                // パブリックロードバランサーを使用するかどうか
@@ -100,7 +100,7 @@
     "cpu": 256,                                                                // タスク定義で使用するCPUの単位
     "memory": 512,                                                             // タスク定義で使用するメモリの単位（MB）
     "desiredCounts": 1,                                                        // サービスが維持するべきタスクの数
-    "containerImage": "amazon/amazon-ecs-sample",                              // コンテナイメージの名前
+    "containerImage": "amazon/amazon-ecs-sample",                              // コンテナイメージのURL
     "containerName": "container2",                                             // コンテナの名前
     "containerPort": 80,                                                       // コンテナのポート番号
     "publicLoadBalancer": true,                                                // パブリックロードバランサーを使用するかどうか
